@@ -1,6 +1,20 @@
 version: 2
 jobs:
-
+  build:
+    docker:
+      - image: maxsam4/solidity-kit
+    steps:
+      - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run: yarn install
+      - run: node --version
+      - run: truffle version
+      - run: truffle compile
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
   test:
     docker:
       - image: maxsam4/solidity-kit
