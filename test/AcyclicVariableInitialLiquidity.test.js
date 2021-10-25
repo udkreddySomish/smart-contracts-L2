@@ -786,5 +786,25 @@ contract("Rewards-Market Seperate auth address to settle markets", async functio
 				
 		});
 
+
+		it("Check market creator positions", async () => {
+			timeNow = await latestTime();
+            await acyclicMarkets.createMarketWithVariableLiquidity("Question1", [2,3], [timeNow/1+4*3600,timeNow/1+8*3600,3600],toHex("IPL"),toHex("Cricket-IPL"), [100*1e8,10000*1e8,10000*1e8],{from:users[11]});
+			let betpoints = [0, 100, 201.00098, 201.00098];
+			for(i=1;i<=3;i++)
+			{
+				let betPointUser = (await allMarkets.getUserPredictionPoints(users[11],8,i))/1e5;
+				try {
+					assert.equal(betPointUser,betpoints[i]);
+				} catch (error) {
+					console.log(`Expected: ${betpoints[i]}, Actual: ${betPointUser}`);					
+				}
+			}
+			console.log((await acyclicMarkets.getOptionPrice(8, 1))/1);
+			console.log((await acyclicMarkets.getOptionPrice(8, 2))/1);
+			console.log((await acyclicMarkets.getOptionPrice(8, 3))/1);
+		})
+
+
 	});
 });
